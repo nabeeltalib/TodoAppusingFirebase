@@ -8,18 +8,27 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import { Link } from 'react-router-dom'
+import { signOut } from 'firebase/auth';
+import { auth } from '../config/firbase'
+import { Navigate, useNavigate } from 'react-router-dom';
 
 export default function MenuAppBar() {
-  const [auth, setAuth] = React.useState(true);
+  const [Auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const navigate = useNavigate()
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    signOut(auth).then(() => {
+      navigate('/')
+    }).catch((error) => {
+      console.log(error);
+      
+    });
+
   };
 
   return (
@@ -38,7 +47,7 @@ export default function MenuAppBar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Photos
           </Typography>
-          {auth && (
+          {Auth && (
             <div>
               <IconButton
                 size="large"
@@ -65,9 +74,7 @@ export default function MenuAppBar() {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}><Link to={'/'}>Home</Link></MenuItem>
-                <MenuItem onClick={handleClose}><Link to={'login'}>Login</Link></MenuItem>
-                <MenuItem onClick={handleClose}><Link to={'register'}>Register</Link></MenuItem>
+                <MenuItem onClick={handleClose}>Log Out</MenuItem>
               </Menu>
             </div>
           )}
